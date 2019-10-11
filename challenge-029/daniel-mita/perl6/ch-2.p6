@@ -15,8 +15,9 @@ sub MAIN (
   given Buf.allocate: $bytes {
     given .&getrandom: $bytes, $flags {
       when -1 {
-        die sub strerror( int32 --> Str ) is native {*}(
-          cglobal |( 'c', v6; 'errno'; int32 ) );
+        die cglobal( |( 'c', v6; 'errno'; int32 ) ).&(
+          sub strerror ( int32 --> Str ) is native {*}
+        );
       }
       when * < $bytes { die 'got fewer bytes than requested' }
     }
